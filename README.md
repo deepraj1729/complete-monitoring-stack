@@ -23,7 +23,7 @@ This monitoring stack consists of two main pillars:
 graph LR
     A[Node Exporter] --> B[Prometheus]
     B --> C[Grafana]
-    style A fill:#f9d71c
+    style A fill:#e6b800
     style B fill:#e6522c
     style C fill:#F46800
 ```
@@ -34,7 +34,7 @@ graph LR
     A[Services] --> B[Promtail]
     B --> C[Loki]
     C --> D[Grafana]
-    style A fill:#66b3ff
+    style A fill:#4db8ff
     style B fill:#3399ff
     style C fill:#0066cc
     style D fill:#F46800
