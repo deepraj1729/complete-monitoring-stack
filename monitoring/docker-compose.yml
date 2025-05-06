@@ -10,6 +10,22 @@ services:
     volumes:
       - /:/host:ro,rslave
 
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.52.1
+    container_name: cadvisor
+    networks:
+      - prod-network
+    volumes:
+      - /:/rootfs:ro
+      - /run:/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    privileged: true
+    restart: unless-stopped
+
   prometheus:
     image: prom/prometheus:v2.47.2
     container_name: prometheus

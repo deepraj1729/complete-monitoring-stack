@@ -22,10 +22,12 @@ This monitoring stack consists of two main pillars:
 ```mermaid
 graph LR
     A[Node Exporter] --> B[Prometheus]
+    D[cAdvisor] --> B
     B --> C[Grafana]
     style A fill:#e6b800
     style B fill:#e6522c
     style C fill:#F46800
+    style D fill:#00b33c
 ```
 
 ### Logs Monitoring
@@ -46,6 +48,7 @@ graph LR
 |-----------|---------|-------------|
 | Prometheus | v2.47.2 | Time series database for metrics |
 | Node Exporter | v1.7.0 | System metrics exporter |
+| cAdvisor | v0.52.1 | Container metrics exporter |
 | Loki | v3.5.0 | Log aggregation system |
 | Promtail | v3.5.0 | Log collector and forwarder |
 | Grafana | v11.6.1 | Visualization and analytics platform |
@@ -102,12 +105,15 @@ The stack monitors the following services:
 - Node Exporter metrics: `node_exporter:9100`
 
 ### Node Exporter
-- Port: 9100
 - Exposes: Host system metrics
 - Mount points:
   - `/proc`: Process information
   - `/sys`: System information
   - `/`: Root filesystem
+
+### cAdvisor
+- Exposes: Container metrics
+- Docker socket: `/var/run/docker.sock`
 
 ### Loki
 - Configuration file: `monitoring/loki/config.yaml`
