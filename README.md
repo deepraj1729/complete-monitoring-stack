@@ -2,17 +2,17 @@
 
 A comprehensive monitoring solution using CNCF tools for both metrics and logs monitoring. This stack provides a complete observability solution for your applications and infrastructure.
 
-## 📋 Table of Contents
+## Table of Contents 📋
 
-- [Architecture](#architecture)
-- [Components](#components)
-- [Prerequisites](#prerequisites)
-- [Getting Started](#getting-started)
-- [Services Monitoring](#services-monitoring)
-- [Configuration](#configuration)
-- [Access UIs](#access-uis)
-- [Security](#security)
-- [License](#license)
+- [Architecture](#-architecture)
+- [Components](#-components)
+- [Prerequisites](#-prerequisites)
+- [Getting Started](#-getting-started)
+- [Services Monitoring](#-services-monitoring)
+- [Configuration](#%EF%B8%8F-configuration)
+- [Access UIs](#-access-uis)
+- [Security](#-security)
+- [License](#-license)
 
 ## 🏗 Architecture
 
