@@ -1,0 +1,43 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: system
+    static_configs:
+    - targets:
+        - localhost
+      labels:
+        job: varlogs
+        __path__: /var/log/*log
+
+  - job_name: prod_services # Job name for these logs
+    docker_sd_configs: # Use Docker Service Discovery
+      - host: unix:///var/run/docker.sock # Connect to Docker socket on the host
+        refresh_interval: 5s
+        # --- ADD THIS FILTER ---
+        filters:
+        - name: label # Filter based on a container label
+          # Only include containers with this specific label key=value pair
+          values: [com.docker.compose.project=services]
+        # --- END OF ADDED FILTER ---
+    relabel_configs:
+    # Get container name
+    - source_labels: ['__meta_docker_container_name']
+      regex: '/?(.*)'
+      target_label: 'container_name'
+    # Get compose service name (still useful)
+    - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+      target_label: 'compose_service'
+    # Get compose project name (still useful for confirmation/labeling)
+    - source_labels: ['__meta_docker_container_label_com_docker_compose_project']
+      target_label: 'compose_project'
+    # Use the job name we defined above
+    - source_labels: ['job']
+      target_label: 'job'

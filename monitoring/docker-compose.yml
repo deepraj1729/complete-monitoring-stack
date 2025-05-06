@@ -1,0 +1,80 @@
+services:
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:v1.7.0
+    container_name: node_exporter
+    command: "--path.rootfs=/host"
+    networks:
+      - prod-network
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - /:/host:ro,rslave
+
+  prometheus:
+    image: prom/prometheus:v2.47.2
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - prod-network
+    restart: unless-stopped
+    depends_on:
+      - node_exporter
+    volumes:
+      - ./prometheus/config.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+  
+  promtail:
+    image: grafana/promtail:3.5.0
+    container_name: promtail
+    networks:
+      - prod-network
+    depends_on:
+      - loki
+    command: -config.file=/etc/promtail/config.yaml
+    restart: unless-stopped
+    volumes:
+      - ./promtail/config.yaml:/etc/promtail/config.yaml:ro
+      - /var/log:/var/log:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+  
+  loki:
+    container_name: loki
+    image: grafana/loki:3.5.0
+    command: "-config.file=/etc/loki/config.yaml"
+    networks:
+      - prod-network
+    restart: unless-stopped
+    volumes:
+      - ./loki/config.yaml:/etc/loki/config.yaml:ro
+      - ./loki/data:/tmp:rw
+  
+  grafana:
+    image: grafana/grafana:11.6.1
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - prod-network
+    depends_on:
+      - prometheus
+      - loki
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=GrAfAnA@2025
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/datasources
+      - grafana_data:/var/lib/grafana
+
+volumes:
+  prometheus_data:
+    name: prometheus_data
+    driver: local
+  grafana_data:
+    name: grafana_data
+    driver: local
+
+networks:
+  prod-network:
+    external: true
